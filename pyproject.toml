@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"
 
 [project]
 name = "sefaria-mcp"
@@ -10,13 +10,13 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
 dependencies = [
-    "fastmcp",
-    "hdate",
-    "requests",
-    "pillow",
-    "fastapi",
-    "uvicorn",
-    "python-dotenv"
+    "fastapi>=0.116.1",
+    "fastmcp>=2.10.6",
+    "hdate>=1.1.2",
+    "pillow>=11.3.0",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.4",
+    "uvicorn>=0.35.0",
 ]
 
 [project.scripts]

@@ -1,0 +1,29 @@
+{
+	"name": "sefaria-mcp",
+	"main": "src/sefaria_mcp/main.py",
+	"compatibility_flags": ["python_workers"],
+	"compatibility_date": "2025-07-24",
+	"routes": [
+		{
+			"pattern": "mcp.sefaria.ai",
+			"custom_domain": true
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "ns",
+				"class_name": "FastMCPServer"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["FastMCPServer"]
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
+}

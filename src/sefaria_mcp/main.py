@@ -1,3 +1,4 @@
+from fastapi import FastAPI
 from fastmcp import FastMCP
 
 # Local imports
@@ -17,10 +18,23 @@ mcp = FastMCP("Sefaria MCP 📚")
 register_resources(mcp)
 register_tools(mcp)
 
-# Create a Starlette-compatible ASGI app for use with Uvicorn/Hypercorn.
-# This exposes the MCP endpoint at `/sse` and keeps FastMCP's session manager intact.
-app = mcp.http_app(transport="sse")
+# ---------------------------------------------------------------------------
+# Dual transport setup for backwards compatibility
+# ---------------------------------------------------------------------------
+# Create both SSE (legacy) and HTTP (modern) transport apps
+sse_app = mcp.http_app(transport="sse")     # Legacy SSE transport
+http_app = mcp.http_app(transport="http")   # Modern HTTP streaming transport
+
+# Mount both transports on a single FastAPI app
+app = FastAPI(title="Sefaria MCP Server", version="1.0.0")
+app.mount("/sse", sse_app)    # Legacy: GET /sse (backwards compatible)
+app.mount("/mcp", http_app)   # Modern: POST /mcp (recommended for new clients)
 app.router.redirect_slashes = False
+
+# Health check endpoint
+@app.get("/healthz")
+async def health_check():
+    return {"status": "healthy", "transports": ["sse", "http"]}
 
 # ---------------------------------------------------------------------------
 # CLI entry-point
@@ -28,7 +42,8 @@ app.router.redirect_slashes = False
 
 
 def main() -> None:  # pragma: no cover – simple wrapper for console_scripts
-    mcp.run(transport="sse", path="/sse", host="0.0.0.0", port=8088)
+    import uvicorn
+    uvicorn.run("sefaria_mcp.main:app", host="0.0.0.0", port=8088, reload=False)
 
 if __name__ == "__main__":
     main() 
