@@ -1,0 +1,16 @@
+name = "sefaria-mcp"
+main = "src/sefaria_mcp/main.py"
+compatibility_flags = ["python_workers"]
+compatibility_date = "2024-12-20"
+
+[[routes]]
+pattern = "mcp.sefaria.ai"
+custom_domain = true
+
+[observability.logs]
+enabled = true
+
+[[rules]]
+globs = ["vendor/**"]
+type = "Data"
+fallthrough = true

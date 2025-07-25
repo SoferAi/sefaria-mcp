@@ -2,7 +2,11 @@ import datetime
 import requests
 import json
 import urllib.parse
-import hdate
+try:
+    import hdate
+    HDATE_AVAILABLE = True
+except ImportError:
+    HDATE_AVAILABLE = False
 import base64
 from io import BytesIO
 from PIL import Image
@@ -88,10 +92,18 @@ async def get_situational_info(logger):
     """
     logger = _ensure_logger(logger)
     try:
-        # Get current Hebrew date
+        # Get current Hebrew date if available
         # Note: This may be off by a day if server time and user timezone differ
         now = datetime.datetime.now()
-        h = hdate.HDateInfo(now)  # Includes day of week
+        hebrew_date = None
+        if HDATE_AVAILABLE:
+            try:
+                h = hdate.HDateInfo(now)  # Includes day of week
+                hebrew_date = str(h)
+            except Exception:
+                hebrew_date = "Hebrew date calculation failed"
+        else:
+            hebrew_date = "Hebrew date not available (hdate library not installed)"
         
         # Get extended calendar information from Sefaria
         # Note: This will retrieve the Israel Parasha when Israel and diaspora differ
@@ -100,11 +112,11 @@ async def get_situational_info(logger):
         if not calendar_data:
             return json.dumps({
                 "error": "Could not retrieve calendar data from Sefaria",
-                "Hebrew Date": str(h)
+                "Hebrew Date": hebrew_date
             })
         
         # Add Hebrew date to the response
-        calendar_data["Hebrew Date"] = str(h)
+        calendar_data["Hebrew Date"] = hebrew_date
         
         return json.dumps(calendar_data, indent=2, ensure_ascii=False)
     

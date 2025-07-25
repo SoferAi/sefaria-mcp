@@ -78,7 +78,7 @@ profile_default/
 ipython_config.py
 
 # pyenv
-.python-version
+# .python-version
 
 # pipenv
 Pipfile.lock
@@ -141,3 +141,5 @@ cython_debug/
 # Workspace
 *.code-workspace
 *.claude 
+
+vendor/
