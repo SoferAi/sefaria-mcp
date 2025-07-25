@@ -19,3 +19,8 @@ hebrew-dates = ["hdate"]
 
 [project.scripts]
 sefaria-mcp = "sefaria_mcp.main:main" 
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
